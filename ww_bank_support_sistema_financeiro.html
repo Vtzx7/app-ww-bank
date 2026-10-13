@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WW Bank & Support - Gestão Financeira & Investimentos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        darkBg: '#080d1a',
+                        cardBg: '#11192e',
+                        cardBorder: '#1e2d4a',
+                        accentBlue: '#2563eb',
+                        accentNeon: '#00f2fe'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #080d1a; }
+        ::-webkit-scrollbar-thumb { background: #1e2d4a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+        .glass-panel {
+            background: rgba(17, 25, 46, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(30, 45, 74, 0.8);
+        }
+        .modal-active { overflow: hidden; }
+    </style>
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Onboarding / Registration Modal -->
+    <div id="modal-onboarding" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-xl p-6 sm:p-8 rounded-3xl border border-brand-500/40 shadow-2xl shadow-brand-900/40 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 via-teal-500 to-accentNeon flex items-center justify-center mx-auto shadow-lg shadow-brand-600/30">
+                    <i class="fa-solid fa-shield-halved text-white text-3xl"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">WW <span class="text-brand-500">Bank & Support</span></h2>
+                <p class="text-xs sm:text-sm text-slate-300">Cadastre seus dados para calcularmos com exatidão seus rendimentos e o seu Limite de Gastos Seguros (WW).</p>
+            </div>
+
+            <form onsubmit="handleRegister(event)" class="space-y-4 text-xs sm:text-sm">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Seu Nome Completo ou Apelido</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-400"></i>
+                        <input type="text" id="reg-name" required placeholder="Ex: Lucas Andrade" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">Patrimônio Investido / Inicial (R$)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-3 text-slate-400 font-bold">R$</span>
+                            <input type="number" step="0.01" id="reg-total" required placeholder="80000.00" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Saldo guardado ou aplicado em conta.</p>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">Sua Renda Mensal / Salário (R$)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-3 text-slate-400 font-bold">R$</span>
+                            <input type="number" step="0.01" id="reg-income" required placeholder="12000.00" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Ganhos do trabalho/empresa por mês.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">Rentabilidade Estimada (% a.m.)</label>
+                        <div class="relative">
+                            <input type="number" step="0.01" id="reg-rate" value="1.0" required placeholder="1.0" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                            <span class="absolute right-4 top-3 text-slate-400 font-bold">%</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Rendimento médio da carteira.</p>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">% da Renda Livre p/ Gastar</label>
+                        <div class="relative">
+                            <input type="number" step="1" min="0" max="100" id="reg-income-spend-pct" value="20" required class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-500 transition-all">
+                            <span class="absolute right-4 top-3 text-slate-400 font-bold">%</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">% da renda liberada sem culpa.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-brand-900/20 border border-brand-500/30 text-xs text-brand-300 space-y-1">
+                    <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-calculator"></i> Lógica Financeira Correta WW:</p>
+                    <p class="text-slate-300 text-[11px] leading-relaxed">
+                        Seu <strong>Lucro de Investimentos</strong> será recalculado automaticamente em cima dos seus R$ investidos (ex: 1% de R$ 80.000 = R$ 800/mês). Seu <strong>Limite WW</strong> somará esse rendimento + a porcentagem separada da sua renda mensal!
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-brand-600 via-teal-500 to-accentBlue hover:from-brand-500 hover:to-accentBlue text-white font-bold rounded-xl text-sm transition-all shadow-xl shadow-brand-600/30 flex items-center justify-center space-x-2">
+                    <span>Criar Minha Conta no WW Bank</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="bg-cardBg/90 backdrop-blur-md border-b border-cardBorder sticky top-0 z-30 px-4 sm:px-8 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center shadow-lg shadow-brand-600/20">
+                <i class="fa-solid fa-shield-halved text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-base sm:text-lg text-white tracking-tight">WW <span class="text-brand-500">Bank</span></h1>
+                <p class="text-[10px] sm:text-xs text-slate-400 hidden sm:block">Painel de Investimentos & Suporte Financeiro Especializado</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-2 sm:space-x-4">
+            <div class="flex items-center space-x-3 bg-slate-900/80 px-3 py-1.5 rounded-2xl border border-cardBorder">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-brand-600 flex items-center justify-center font-bold text-white text-xs" id="user-avatar">
+                    US
+                </div>
+                <div class="text-left hidden md:block">
+                    <p class="text-xs font-bold text-white" id="header-user-name">Carregando...</p>
+                    <p class="text-[10px] text-brand-400">Patrimônio: <span id="header-total-val" class="masked-val">R$ 0,00</span></p>
+                </div>
+            </div>
+
+            <button onclick="togglePrivacy()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-cardBorder" title="Ocultar/Mostrar Valores">
+                <i id="privacy-icon" class="fa-solid fa-eye text-sm"></i>
+            </button>
+
+            <!-- Prominent Logout & Reset Button -->
+            <button onclick="handleLogout()" class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold transition-all flex items-center space-x-1.5 shadow-md shadow-rose-950/20" title="Sair do aplicativo ou Cadastrar novos valores">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                <span class="hidden sm:inline">Sair / Novo Cadastro</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex flex-col md:flex-row min-w-0">
+        <!-- Sidebar Navigation -->
+        <aside class="hidden md:flex flex-col w-64 bg-cardBg/60 border-r border-cardBorder p-4 sticky top-[61px] h-[calc(100vh-61px)] space-y-2">
+            <button onclick="switchTab('overview')" id="nav-overview" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-xs sm:text-sm bg-brand-600/20 text-brand-400 border border-brand-500/30">
+                <i class="fa-solid fa-chart-pie w-5"></i>
+                <span>Visão Geral & Limite WW</span>
+            </button>
+            <button onclick="switchTab('investments')" id="nav-investments" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-xs sm:text-sm text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all">
+                <i class="fa-solid fa-wallet w-5"></i>
+                <span>Mercado de Investimentos</span>
+            </button>
+            <button onclick="switchTab('support')" id="nav-support" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-xs sm:text-sm text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all">
+                <i class="fa-solid fa-headset w-5"></i>
+                <span>Suporte & Chat IA</span>
+            </button>
+            <button onclick="switchTab('tools')" id="nav-tools" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-xs sm:text-sm text-slate-400 hover:bg-slate-800/60 hover:text-white transition-all">
+                <i class="fa-solid fa-calculator w-5"></i>
+                <span>Simulador de Futuro</span>
+            </button>
+
+            <div class="pt-6 mt-auto">
+                <div class="glass-panel p-4 rounded-2xl space-y-3">
+                    <div class="flex items-center justify-between text-xs text-white font-semibold">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-brand-400"></i> Ajustes Rápido</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Quer ajustar sua Renda ou Saldo de forma imediata?</p>
+                    <button onclick="openEditModal()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-brand-400 rounded-lg text-xs font-semibold border border-cardBorder transition-all">
+                        Editar Meus Dados
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Body -->
+        <main class="flex-1 p-4 sm:p-8 space-y-6 max-w-7xl mx-auto w-full pb-24 md:pb-8">
+            
+            <!-- TAB 1: OVERVIEW -->
+            <section id="tab-overview" class="tab-content space-y-6">
+                <!-- WW Safe Spend Card -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 p-6 sm:p-8 border border-brand-500/40 shadow-2xl">
+                    <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div class="space-y-3">
+                            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/20 border border-brand-400/30 text-brand-300 text-xs font-semibold">
+                                <i class="fa-solid fa-bolt text-brand-400"></i>
+                                <span>Cálculo Exclusivo WW - Sobra Segura sem Culpa</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Você pode gastar este mês até:</p>
+                                <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight mt-1">R$ <span class="masked-val text-brand-400" id="ww-safe-spend">0,00</span></h2>
+                            </div>
+                            <div class="text-xs text-slate-300 max-w-2xl leading-relaxed space-y-1">
+                                <p><i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i> <strong>R$ <span id="ww-sub-profit">0,00</span></strong> provenientes do lucro dos seus investimentos em carteira.</p>
+                                <p><i class="fa-solid fa-circle-check text-teal-400 mr-1"></i> <strong>R$ <span id="ww-sub-income">0,00</span></strong> correspondentes a <span id="ww-sub-pct">20</span>% da sua renda mensal reservada para lazer/uso livre.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
+                            <button onclick="switchTab('investments')" class="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-teal-500 hover:from-brand-500 hover:to-teal-400 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-brand-600/30 flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-circle-plus"></i>
+                                <span>Investir Mais Saldo</span>
+                            </button>
+                            <button onclick="openEditModal()" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-cardBorder font-semibold text-xs sm:text-sm transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-gear"></i>
+                                <span>Ajustar Parâmetros</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Cards Summary -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl space-y-2">
+                        <div class="flex justify-between items-center text-slate-400 text-xs">
+                            <span>Patrimônio Investido</span>
+                            <i class="fa-solid fa-vault text-brand-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-white">R$ <span class="masked-val" id="dash-total">0,00</span></h3>
+                        <p class="text-[11px] text-slate-400">Total acumulado na conta</p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl space-y-2">
+                        <div class="flex justify-between items-center text-slate-400 text-xs">
+                            <span>Lucro Real dos Investimentos</span>
+                            <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-emerald-400">R$ <span class="masked-val" id="dash-profit">0,00</span>/mês</h3>
+                        <p class="text-[11px] text-slate-400">Calculado a <span id="dash-rate">1.0</span>% a.m.</p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl space-y-2">
+                        <div class="flex justify-between items-center text-slate-400 text-xs">
+                            <span>Renda Mensal (Trabalho)</span>
+                            <i class="fa-solid fa-briefcase text-accentBlue"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-accentBlue">R$ <span class="masked-val" id="dash-income">0,00</span></h3>
+                        <p class="text-[11px] text-slate-400">Seus ganhos por mês</p>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl space-y-2">
+                        <div class="flex justify-between items-center text-slate-400 text-xs">
+                            <span>Total de Ativos Ativos</span>
+                            <i class="fa-solid fa-chart-line text-teal-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-white"><span id="dash-asset-count">5</span> Categoria(s)</h3>
+                        <p class="text-[11px] text-teal-400 font-semibold">Carteira Diversificada</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio Allocation & Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass-panel p-6 rounded-2xl space-y-4 lg:col-span-2">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-white text-sm sm:text-base">Distribuição Atual da sua Carteira</h3>
+                            <button onclick="switchTab('investments')" class="text-xs text-brand-400 hover:underline flex items-center gap-1">
+                                Gerenciar Ativos <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4 text-xs" id="portfolio-bars">
+                            <!-- Injected via JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Support Panel -->
+                    <div class="glass-panel p-6 rounded-2xl space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-headset"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-base">Suporte & Orientação Financeira</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Ficou em dúvida de como alocar sua renda de R$ <span class="masked-val" id="quick-income-display">0,00</span> ou quer reequilibrar seus investimentos? Fale com nossa IA de suporte!
+                            </p>
+                        </div>
+                        <button onclick="switchTab('support')" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl text-xs transition-all shadow-md shadow-brand-600/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-comments"></i>
+                            <span>Abrir Atendimento IA</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: INVESTMENTS MARKET -->
+            <section id="tab-investments" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Mercado de Investimentos WW</h3>
+                        <p class="text-xs text-slate-400">Aplique, resgate ou simule os rendimentos dos seus ativos em tempo real.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openInvestmentModal('buy')" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl text-xs transition-all shadow-md flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Novo Aporte</span>
+                        </button>
+                        <button onclick="openInvestmentModal('withdraw')" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-400 border border-cardBorder font-semibold rounded-xl text-xs transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-minus"></i>
+                            <span>Resgatar Valor</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Assets Grid Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="assets-grid">
+                    <!-- Injected via JavaScript -->
+                </div>
+
+                <!-- Detailed Assets Table -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-cardBorder">
+                    <div class="p-4 border-b border-cardBorder font-bold text-white text-xs flex justify-between items-center">
+                        <span>Extrato Detalhado de Investimentos</span>
+                        <span class="text-[11px] font-normal text-slate-400">Patrimônio Ativo: R$ <span class="masked-val" id="table-total-patrimony">0,00</span></span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-4">Ativo / Categoria</th>
+                                    <th class="p-4">Risco</th>
+                                    <th class="p-4">Rendimento Mensal</th>
+                                    <th class="p-4">Saldo Aplicado</th>
+                                    <th class="p-4">Lucro Estimado/Mês</th>
+                                    <th class="p-4 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-cardBorder text-slate-200" id="assets-table-body">
+                                <!-- Injected via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: SUPPORT & CHAT -->
+            <section id="tab-support" class="tab-content hidden space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Central de Suporte WW</h3>
+                    <p class="text-xs text-slate-400">Tire dúvidas financeiras com nosso assistente virtual ou abra chamados com nossa equipe técnica.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- AI Chat Box -->
+                    <div class="glass-panel rounded-2xl border border-cardBorder lg:col-span-2 flex flex-col h-[520px]">
+                        <div class="p-4 border-b border-cardBorder flex items-center justify-between bg-slate-900/60">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md">
+                                    <i class="fa-solid fa-robot text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white text-xs sm:text-sm">Assistente Financeiro WW</h4>
+                                    <p class="text-[10px] text-emerald-400 flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        Online - Atendimento 24h
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white shrink-0">
+                                    <i class="fa-solid fa-robot text-xs"></i>
+                                </div>
+                                <div class="bg-slate-800/90 p-3.5 rounded-2xl rounded-tl-none text-slate-200 border border-cardBorder max-w-[85%] space-y-1">
+                                    <p class="font-semibold text-white">Olá <span id="chat-user-greeting">Usuário</span>!</p>
+                                    <p>Sou o assistente do WW Bank. Como posso ajudar com seus R$ <span id="chat-income-display">0,00</span> de renda ou com os investimentos da sua carteira?</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 border-t border-cardBorder bg-slate-900/40">
+                            <form onsubmit="handleChatSubmit(event)" class="flex items-center space-x-2">
+                                <input type="text" id="chat-input" placeholder="Pergunte sobre seus investimentos, limite WW ou tiragem de dúvidas..." class="flex-1 bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <button type="submit" class="px-4 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-all shrink-0">
+                                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tickets Management Panel -->
+                    <div class="glass-panel p-5 rounded-2xl space-y-4">
+                        <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-ticket text-brand-400"></i>
+                            <span>Abrir Ticket de Suporte</span>
+                        </h4>
+                        <form onsubmit="handleCreateTicket(event)" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block text-slate-400 mb-1">Assunto do Chamado</label>
+                                <input type="text" id="ticket-subject" required placeholder="Ex: Dúvida no resgate de investimento" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">Descrição</label>
+                                <textarea id="ticket-msg" rows="3" required placeholder="Explique em detalhes o seu problema ou solicitação..." class="w-full bg-slate-900/90 border border-cardBorder rounded-xl p-3 text-white focus:outline-none focus:border-brand-500"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-brand-600 to-teal-500 hover:from-brand-500 hover:to-teal-400 text-white rounded-xl font-semibold transition-all shadow-md">
+                                Registrar Chamado
+                            </button>
+                        </form>
+
+                        <div class="pt-3 border-t border-cardBorder space-y-2">
+                            <p class="text-xs font-bold text-white">Seus Tickets Ativos:</p>
+                            <div id="ticket-list" class="space-y-2 text-[11px] text-slate-300 max-h-44 overflow-y-auto pr-1">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: TOOLS / SIMULATION -->
+            <section id="tab-tools" class="tab-content hidden space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Simulador de Projeção Financeira</h3>
+                    <p class="text-xs text-slate-400">Projete o crescimento dos seus investimentos ao longo do tempo com aportes regulares.</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl max-w-xl space-y-5">
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label class="block text-slate-400 mb-1">Patrimônio Inicial (R$)</label>
+                            <input type="number" id="sim-initial" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">Aporte Mensal Pretendido (R$)</label>
+                            <input type="number" id="sim-monthly" value="1000" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white font-semibold">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-slate-400 mb-1">Tempo (Anos)</label>
+                                <input type="number" id="sim-years" value="5" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">Taxa Anual Estimada (%)</label>
+                                <input type="number" id="sim-rate-year" value="12" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white font-semibold">
+                            </div>
+                        </div>
+                        <button onclick="runSimulation()" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-brand-600/30">
+                            Calcular Evolução Patrimonial
+                        </button>
+                    </div>
+
+                    <div id="sim-output" class="p-4 rounded-xl bg-slate-900/90 border border-brand-500/30 hidden text-xs space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">Total Acumulado:</span>
+                            <span class="font-bold text-white text-base" id="sim-res-total">R$ 0,00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">Total Investido (Aportes):</span>
+                            <span class="font-semibold text-slate-300" id="sim-res-invested">R$ 0,00</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-cardBorder">
+                            <span class="text-emerald-400 font-semibold">Lucro Apenas em Juros:</span>
+                            <span class="font-bold text-emerald-400 text-sm" id="sim-res-profit">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="modal-edit" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-cardBorder space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-white text-base">Editar Informações Financeiras</h3>
+                <button onclick="closeModal('modal-edit')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleQuickEdit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Patrimônio Investido (R$)</label>
+                    <input type="number" step="0.01" id="edit-total" required class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Renda Mensal / Salário (R$)</label>
+                    <input type="number" step="0.01" id="edit-income" required class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Taxa de Rendimento Média (% a.m.)</label>
+                    <input type="number" step="0.01" id="edit-rate" required class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">% da Renda Liberada para Gastar</label>
+                    <input type="number" step="1" min="0" max="100" id="edit-income-spend-pct" required class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white">
+                </div>
+                <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-all">Salvar e Recalcular</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Buy/Withdraw Investment Modal -->
+    <div id="modal-invest-action" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-cardBorder space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-white text-base" id="invest-modal-title">Operação de Investimento</h3>
+                <button onclick="closeModal('modal-invest-action')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleInvestmentAction(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Selecione o Ativo</label>
+                    <select id="invest-select-asset" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-3.5 py-2.5 text-white">
+                        <!-- Injected via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Valor da Operação (R$)</label>
+                    <input type="number" step="0.01" min="1" id="invest-amount" required placeholder="1000.00" class="w-full bg-slate-900/90 border border-cardBorder rounded-xl px-4 py-2.5 text-white font-semibold">
+                </div>
+                <button type="submit" id="invest-modal-btn" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-all">Confirmar Operação</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-cardBg border-t border-cardBorder px-4 py-2.5 flex justify-around items-center z-30">
+        <button onclick="switchTab('overview')" class="flex flex-col items-center text-brand-400 text-[10px]">
+            <i class="fa-solid fa-chart-pie text-base"></i>
+            <span>Início</span>
+        </button>
+        <button onclick="switchTab('investments')" class="flex flex-col items-center text-slate-400 text-[10px]">
+            <i class="fa-solid fa-wallet text-base"></i>
+            <span>Ativos</span>
+        </button>
+        <button onclick="switchTab('support')" class="flex flex-col items-center text-slate-400 text-[10px]">
+            <i class="fa-solid fa-headset text-base"></i>
+            <span>Suporte</span>
+        </button>
+        <button onclick="switchTab('tools')" class="flex flex-col items-center text-slate-400 text-[10px]">
+            <i class="fa-solid fa-calculator text-base"></i>
+            <span>Simular</span>
+        </button>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed bottom-16 md:bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- JavaScript Application Core Logic -->
+    <script>
+        // Default Assets Catalog Configuration
+        const DEFAULT_ASSETS = [
+            { id: 'rf', name: 'Tesouro Selic / Renda Fixa', risk: 'Baixo', riskClass: 'text-brand-400', returnRate: 0.9, sharePct: 0.50, desc: 'Títulos públicos de alta liquidez e segurança.' },
+            { id: 'fii', name: 'Fundos Imobiliários (FIIs)', risk: 'Médio', riskClass: 'text-teal-400', returnRate: 1.0, sharePct: 0.25, desc: 'Dividendos isentos pagos mensalmente na conta.' },
+            { id: 'actions', name: 'Ações / Renda Variável', risk: 'Alto', riskClass: 'text-accentBlue', returnRate: 1.4, sharePct: 0.15, desc: 'Participação em empresas de grande porte.' },
+            { id: 'crypto', name: 'Criptomoedas / Bitcoin', risk: 'Muito Alto', riskClass: 'text-amber-400', returnRate: 2.5, sharePct: 0.05, desc: 'Ativos digitais de alta volatilidade.' },
+            { id: 'poupanca', name: 'Reserva de Emergência / Poupança', risk: 'Baixíssimo', riskClass: 'text-slate-400', returnRate: 0.5, sharePct: 0.05, desc: 'Garantia para imprevistos imediatos.' }
+        ];
+
+        // State initialized from LocalStorage or Null
+        let currentUser = JSON.parse(localStorage.getItem('ww_user_profile_v2')) || null;
+        let tickets = JSON.parse(localStorage.getItem('ww_user_tickets_v2')) || [
+            { id: 101, subject: 'Dúvida sobre alocação no Tesouro', status: 'Concluído', date: 'Ontem' }
+        ];
+        let privacyMode = false;
+        let activeInvestAction = 'buy';
+
+        // Window Load Handler
+        window.onload = function() {
+            if (!currentUser) {
+                showOnboarding();
+            } else {
+                hideOnboarding();
+                renderUserData();
+            }
+        };
+
+        function showOnboarding() {
+            document.getElementById('modal-onboarding').classList.remove('hidden');
+            document.body.classList.add('modal-active');
+        }
+
+        function hideOnboarding() {
+            document.getElementById('modal-onboarding').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        // Onboarding / Register Submit Handler
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const total = parseFloat(document.getElementById('reg-total').value) || 0;
+            const income = parseFloat(document.getElementById('reg-income').value) || 0;
+            const rate = parseFloat(document.getElementById('reg-rate').value) || 1.0;
+            const incomeSpendPct = parseFloat(document.getElementById('reg-income-spend-pct').value) || 20;
+
+            // Initialize assets portfolio based on percentage shares
+            const userAssets = {};
+            DEFAULT_ASSETS.forEach(asset => {
+                userAssets[asset.id] = total * asset.sharePct;
+            });
+
+            currentUser = {
+                name,
+                total,
+                income,
+                rate,
+                incomeSpendPct,
+                assets: userAssets
+            };
+
+            localStorage.setItem('ww_user_profile_v2', JSON.stringify(currentUser));
+
+            hideOnboarding();
+            renderUserData();
+            showToast(`Bem-vindo ao WW Bank, ${name}!`, 'success');
+        }
+
+        // Logout & Reset Handler
+        function handleLogout() {
+            if (confirm("Deseja mesmo sair? Você poderá alterar tudo e cadastrar novos valores do zero!")) {
+                localStorage.removeItem('ww_user_profile_v2');
+                currentUser = null;
+                showOnboarding();
+                showToast("Sessão encerrada. Realize um novo cadastro para continuar.", "info");
+            }
+        }
+
+        // Calculation Helpers for Correct Financial Logic
+        function calculateInvestmentProfit() {
+            if (!currentUser) return 0;
+            // Calculate total profit based on specific allocated asset amounts
+            let totalProfit = 0;
+            DEFAULT_ASSETS.forEach(asset => {
+                const amount = currentUser.assets[asset.id] || 0;
+                totalProfit += amount * (asset.returnRate / 100);
+            });
+            return totalProfit;
+        }
+
+        function calculateSafeSpendLimit() {
+            if (!currentUser) return 0;
+            const investmentProfit = calculateInvestmentProfit();
+            const incomeAllowance = currentUser.income * (currentUser.incomeSpendPct / 100);
+            return investmentProfit + incomeAllowance;
+        }
+
+        // Render User Data to UI
+        function renderUserData() {
+            if (!currentUser) return;
+
+            // Header Profile & Initials
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'US';
+            document.getElementById('user-avatar').innerText = initials;
+            document.getElementById('header-user-name').innerText = currentUser.name;
+            document.getElementById('chat-user-greeting').innerText = currentUser.name;
+
+            // Recalculate Portfolio Total
+            let computedTotal = 0;
+            DEFAULT_ASSETS.forEach(asset => {
+                computedTotal += (currentUser.assets[asset.id] || 0);
+            });
+            currentUser.total = computedTotal;
+
+            const investmentProfit = calculateInvestmentProfit();
+            const safeSpendLimit = calculateSafeSpendLimit();
+            const incomeSpendAllowance = currentUser.income * (currentUser.incomeSpendPct / 100);
+
+            // Format Currency
+            const fmtTotal = computedTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            const fmtProfit = investmentProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            const fmtIncome = currentUser.income.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            const fmtSafeSpend = safeSpendLimit.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            const fmtIncomeAllowance = incomeSpendAllowance.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+            // Update DOM Header & Overview Cards
+            document.getElementById('header-total-val').innerText = 'R$ ' + fmtTotal;
+            document.getElementById('dash-total').innerText = fmtTotal;
+            document.getElementById('dash-profit').innerText = fmtProfit;
+            document.getElementById('dash-income').innerText = fmtIncome;
+            document.getElementById('dash-rate').innerText = currentUser.rate.toFixed(1);
+
+            // WW Limit Details
+            document.getElementById('ww-safe-spend').innerText = fmtSafeSpend;
+            document.getElementById('ww-sub-profit').innerText = fmtProfit;
+            document.getElementById('ww-sub-income').innerText = fmtIncomeAllowance;
+            document.getElementById('ww-sub-pct').innerText = currentUser.incomeSpendPct;
+
+            // Quick display updates
+            document.getElementById('quick-income-display').innerText = fmtIncome;
+            document.getElementById('chat-income-display').innerText = fmtIncome;
+            document.getElementById('table-total-patrimony').innerText = fmtTotal;
+
+            // Fill Quick Edit Inputs
+            document.getElementById('edit-total').value = currentUser.total;
+            document.getElementById('edit-income').value = currentUser.income;
+            document.getElementById('edit-rate').value = currentUser.rate;
+            document.getElementById('edit-income-spend-pct').value = currentUser.incomeSpendPct;
+            document.getElementById('sim-initial').value = currentUser.total;
+
+            renderPortfolioBars();
+            renderAssetsGridAndTable();
+            renderTicketsList();
+        }
+
+        function renderPortfolioBars() {
+            const container = document.getElementById('portfolio-bars');
+            container.innerHTML = '';
+
+            DEFAULT_ASSETS.forEach(asset => {
+                const amount = currentUser.assets[asset.id] || 0;
+                const pct = currentUser.total > 0 ? ((amount / currentUser.total) * 100).toFixed(1) : 0;
+                const fmtAmount = amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+                container.innerHTML += `
+                    <div>
+                        <div class="flex justify-between items-center text-slate-300 mb-1">
+                            <span class="font-medium">${asset.name} (${pct}%)</span>
+                            <span class="font-bold text-white">R$ <span class="masked-val">${fmtAmount}</span></span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-brand-600 to-teal-400 h-full" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderAssetsGridAndTable() {
+            const grid = document.getElementById('assets-grid');
+            const tbody = document.getElementById('assets-table-body');
+            grid.innerHTML = '';
+            tbody.innerHTML = '';
+
+            DEFAULT_ASSETS.forEach(asset => {
+                const amount = currentUser.assets[asset.id] || 0;
+                const monthlyProfit = amount * (asset.returnRate / 100);
+                const fmtAmount = amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const fmtMonthlyProfit = monthlyProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+                // Grid Card
+                grid.innerHTML += `
+                    <div class="glass-panel p-5 rounded-2xl space-y-3 flex flex-col justify-between border border-cardBorder hover:border-brand-500/40 transition-all">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-white text-sm">${asset.name}</h4>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 ${asset.riskClass} font-semibold border border-cardBorder">${asset.risk}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400">${asset.desc}</p>
+                        </div>
+                        <div class="pt-3 border-t border-cardBorder space-y-1">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">Rendimento:</span>
+                                <span class="text-emerald-400 font-bold">+${asset.returnRate}% a.m.</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">Saldo Aplicado:</span>
+                                <span class="text-white font-bold">R$ <span class="masked-val">${fmtAmount}</span></span>
+                            </div>
+                        </div>
+                        <div class="pt-2 flex space-x-2">
+                            <button onclick="openInvestmentModal('buy', '${asset.id}')" class="flex-1 py-2 bg-brand-600/20 hover:bg-brand-600 text-brand-300 hover:text-white border border-brand-500/30 rounded-lg text-xs font-semibold transition-all">Aportar</button>
+                            <button onclick="openInvestmentModal('withdraw', '${asset.id}')" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition-all">Resgatar</button>
+                        </div>
+                    </div>
+                `;
+
+                // Table Row
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/40 transition-all">
+                        <td class="p-4 font-bold text-white">${asset.name}</td>
+                        <td class="p-4"><span class="${asset.riskClass} font-semibold text-[11px]">${asset.risk}</span></td>
+                        <td class="p-4 text-emerald-400 font-semibold">+${asset.returnRate}% a.m.</td>
+                        <td class="p-4 font-bold text-white">R$ <span class="masked-val">${fmtAmount}</span></td>
+                        <td class="p-4 text-emerald-400 font-semibold">R$ <span class="masked-val">+${fmtMonthlyProfit}</span></td>
+                        <td class="p-4 text-right">
+                            <button onclick="openInvestmentModal('buy', '${asset.id}')" class="text-brand-400 hover:underline font-semibold">Aportar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Quick Profile Edit
+        function handleQuickEdit(e) {
+            e.preventDefault();
+            const total = parseFloat(document.getElementById('edit-total').value) || 0;
+            const income = parseFloat(document.getElementById('edit-income').value) || 0;
+            const rate = parseFloat(document.getElementById('edit-rate').value) || 1.0;
+            const incomeSpendPct = parseFloat(document.getElementById('edit-income-spend-pct').value) || 20;
+
+            currentUser.total = total;
+            currentUser.income = income;
+            currentUser.rate = rate;
+            currentUser.incomeSpendPct = incomeSpendPct;
+
+            localStorage.setItem('ww_user_profile_v2', JSON.stringify(currentUser));
+
+            renderUserData();
+            closeModal('modal-edit');
+            showToast("Dados atualizados e limite recalculado!", "success");
+        }
+
+        function openInvestmentModal(action, preselectAssetId = '') {
+            activeInvestAction = action;
+            const title = document.getElementById('invest-modal-title');
+            const btn = document.getElementById('invest-modal-btn');
+            const select = document.getElementById('invest-select-asset');
+
+            select.innerHTML = '';
+            DEFAULT_ASSETS.forEach(asset => {
+                const selected = asset.id === preselectAssetId ? 'selected' : '';
+                select.innerHTML += `<option value="${asset.id}" ${selected}>${asset.name} (+${asset.returnRate}% a.m.)</option>`;
+            });
+
+            if (action === 'buy') {
+                title.innerText = 'Aportar em Investimento';
+                btn.innerText = 'Confirmar Aporte';
+                btn.className = 'w-full py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold transition-all';
+            } else {
+                title.innerText = 'Resgatar do Investimento';
+                btn.innerText = 'Confirmar Resgate';
+                btn.className = 'w-full py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold transition-all';
+            }
+
+            document.getElementById('modal-invest-action').classList.remove('hidden');
+        }
+
+        function handleInvestmentAction(e) {
+            e.preventDefault();
+            const assetId = document.getElementById('invest-select-asset').value;
+            const amount = parseFloat(document.getElementById('invest-amount').value) || 0;
+
+            if (amount <= 0) {
+                showToast("Digite um valor válido para a operação.", "info");
+                return;
+            }
+
+            if (activeInvestAction === 'buy') {
+                currentUser.assets[assetId] = (currentUser.assets[assetId] || 0) + amount;
+                showToast(`Aporte de R$ ${amount.toLocaleString('pt-BR')} realizado com sucesso!`, 'success');
+            } else {
+                if ((currentUser.assets[assetId] || 0) < amount) {
+                    showToast("Saldo insuficiente neste ativo para este resgate.", "info");
+                    return;
+                }
+                currentUser.assets[assetId] -= amount;
+                showToast(`Resgate de R$ ${amount.toLocaleString('pt-BR')} efetuado!`, 'success');
+            }
+
+            localStorage.setItem('ww_user_profile_v2', JSON.stringify(currentUser));
+            renderUserData();
+            closeModal('modal-invest-action');
+        }
+
+        // Navigation Tabs Toggle
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600/20', 'text-brand-400', 'border', 'border-brand-500/30');
+                btn.classList.add('text-slate-400');
+            });
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('bg-brand-600/20', 'text-brand-400', 'border', 'border-brand-500/30');
+            }
+        }
+
+        // Privacy Mode Toggle
+        function togglePrivacy() {
+            privacyMode = !privacyMode;
+            const icon = document.getElementById('privacy-icon');
+            const vals = document.querySelectorAll('.masked-val');
+
+            if (privacyMode) {
+                icon.className = "fa-solid fa-eye-slash";
+                vals.forEach(el => {
+                    el.setAttribute('data-original', el.innerText);
+                    el.innerText = "••••••";
+                });
+            } else {
+                icon.className = "fa-solid fa-eye";
+                vals.forEach(el => {
+                    if (el.hasAttribute('data-original')) el.innerText = el.getAttribute('data-original');
+                });
+            }
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const txt = input.value.trim();
+            if (!txt) return;
+
+            const chat = document.getElementById('chat-messages');
+            chat.innerHTML += `
+                <div class="flex items-start justify-end space-x-2">
+                    <div class="bg-brand-600 text-white p-3.5 rounded-2xl rounded-tr-none max-w-[80%]">${escapeHtml(txt)}</div>
+                </div>
+            `;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+
+            setTimeout(() => {
+                const profit = calculateInvestmentProfit();
+                const safeSpend = calculateSafeSpendLimit();
+                chat.innerHTML += `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white shrink-0">
+                            <i class="fa-solid fa-robot text-xs"></i>
+                        </div>
+                        <div class="bg-slate-800/90 p-3.5 rounded-2xl rounded-tl-none text-slate-200 border border-cardBorder max-w-[85%] space-y-1">
+                            <p>Analisando seus dados: Com sua renda mensal de R$ ${currentUser.income.toLocaleString('pt-BR')} e um patrimônio de R$ ${currentUser.total.toLocaleString('pt-BR')}, seu rendimento de investimentos é R$ ${profit.toLocaleString('pt-BR')}/mês e seu limite seguro de gastos WW é R$ ${safeSpend.toLocaleString('pt-BR')}.</p>
+                        </div>
+                    </div>
+                `;
+                chat.scrollTop = chat.scrollHeight;
+            }, 800);
+        }
+
+        function handleCreateTicket(e) {
+            e.preventDefault();
+            const subj = document.getElementById('ticket-subject').value.trim();
+            if (!subj) return;
+
+            const newTicket = {
+                id: Math.floor(100 + Math.random() * 900),
+                subject: subj,
+                status: 'Em Análise',
+                date: 'Agora'
+            };
+
+            tickets.unshift(newTicket);
+            localStorage.setItem('ww_user_tickets_v2', JSON.stringify(tickets));
+            renderTicketsList();
+            showToast("Ticket criado com sucesso!", "success");
+            e.target.reset();
+        }
+
+        function renderTicketsList() {
+            const list = document.getElementById('ticket-list');
+            if (!list) return;
+            if (tickets.length === 0) {
+                list.innerHTML = `<p class="text-slate-500 italic">Nenhum chamado aberto.</p>`;
+                return;
+            }
+            list.innerHTML = '';
+            tickets.forEach(t => {
+                const badgeClass = t.status === 'Concluído' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+                list.innerHTML += `
+                    <div class="p-2.5 rounded-xl bg-slate-900/80 border border-cardBorder space-y-1">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-white">#${t.id} - ${escapeHtml(t.subject)}</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full border ${badgeClass}">${t.status}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500">Aberto em: ${t.date}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Simulation Calculator
+        function runSimulation() {
+            const init = parseFloat(document.getElementById('sim-initial').value) || 0;
+            const monthly = parseFloat(document.getElementById('sim-monthly').value) || 0;
+            const years = parseInt(document.getElementById('sim-years').value) || 5;
+            const rateYear = parseFloat(document.getElementById('sim-rate-year').value) || 12;
+
+            const months = years * 12;
+            const rateMonth = (rateYear / 100) / 12;
+            let total = init;
+            let totalInvested = init;
+
+            for (let i = 0; i < months; i++) {
+                total = (total + monthly) * (1 + rateMonth);
+                totalInvested += monthly;
+            }
+
+            const profit = total - totalInvested;
+
+            document.getElementById('sim-res-total').innerText = 'R$ ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('sim-res-invested').innerText = 'R$ ' + totalInvested.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('sim-res-profit').innerText = 'R$ ' + profit.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            document.getElementById('sim-output').classList.remove('hidden');
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl text-white text-xs font-bold shadow-2xl ${type === 'success' ? 'bg-brand-600' : 'bg-accentBlue'} flex items-center space-x-2 animate-in fade-in duration-300`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
